@@ -1,0 +1,75 @@
+#include <stdio.h>
+void lin1(double **arr, int i, int N, double a){
+    int m;
+    for (m = 0; m < N; m++){
+        arr[i][m] /= a;
+    }
+    return;
+}
+void lin2(double **arr, int i, int j, int N){
+    int k, m;
+    double arr1;
+    for (k = i + 1; k < N; k++){
+        arr1 = arr[k][j];
+        for (m = j; m < N; m++){
+            arr[k][m] = arr[k][m] - arr1 * arr[i][m];
+        }
+    }
+    return;
+}
+int lin3(double **arr, int i, int N){
+    int j;
+    for (j = 0; j < N; j++){
+        if (arr[i][j] != 0)
+            return j;
+    }
+    return -1;
+}
+void lin4(double **arr, int i, int k, int N){
+    int m;
+    double tmp;
+    for (m = 0; m < N; m++){
+        tmp = arr[i][m];
+        arr[i][m] = arr[k][m];
+        arr[k][m] = tmp;
+    }
+    return;
+}
+double detA(double **arr, int N){
+    int i, j, k;
+    double det = 1;
+    double a;
+    for (i = 0; i < N; i++){
+        j = lin3(arr, i, N);
+        if (j == -1)
+            return 0;
+        if (arr[i][j] == 0){
+            for (k = i + 1; k < N; k++){
+                if (arr[k][j] != 0){
+                    lin4(arr, i, k, N);
+                    det = -det;
+                }
+            }
+        }
+        a = arr[i][j];
+        lin1(arr, i, N, a);
+        det *= a;
+        lin2(arr, i, j, N);
+    }
+    return det;
+}
+int main(){
+    int i, j, N;
+    scanf("%d", &N);
+    double matrix_data[N][N];
+    double *matrix[N];
+    for (i = 0; i < N; i++) matrix[i] = matrix_data[i];
+    for (i = 0; i < N; i++){
+        for (j = 0; j < N; j++){
+            scanf("%lf", &matrix[i][j]);
+        }
+    }
+    double ans = detA(matrix, N);
+    printf("%lf\n", ans);
+    return 0;
+}
